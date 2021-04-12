@@ -69,10 +69,40 @@ def item_type_unit_sold():
         
         return temp_dic
 
+    #change file name
+def get_unique_country_per_region(regions):
+    number_dict = {}
+    country_dict = {}
+    for i in regions:
+        number_dict.update({i:0})
+        country_dict.update({i:[]})
+    csv_fd = open("sales_records_2.csv", 'r')
+    csv_reader = csv.DictReader(csv_fd)
+    for row in csv_reader:
+        number_dict[row['region']]+=1
+        country_dict[row['region']].append(row['country'])
+    return f'{number_dict} and {country_dict}'
+    
+    #change file name
+def get_regions():
+    csv_fd = open("sales_records_2.csv", 'r')
+    csv_reader = csv.reader(csv_fd)
+    x = csv_fd.readlines()[1:]
+    regions = []
+    for i in x:
+        regions.append(i[0:i.index(',')])
+    return set(regions)
 
-                
+def profit_by_country(country):
+    
+    
+ 
+
+
             
 
 if __name__ == "__main__":
-    print(count_unique_item_types())
-    print(item_type_unit_sold())
+    #print(count_unique_item_types())
+    #print(item_type_unit_sold())
+    print(get_unique_country_per_region(get_regions()))
+    
