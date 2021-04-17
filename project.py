@@ -1,9 +1,11 @@
 import csv
 from datetime import datetime
+import sys
+import arrow
 
 # Function 1:
 def compute_profit():
-    csv_fd = open("sales_records_2.csv", 'r')
+    csv_fd = open("sales_records.csv", 'r')
     csv_reader = csv.DictReader(csv_fd)
     list_ = []
     for row in csv_reader:
@@ -13,7 +15,7 @@ def compute_profit():
     
 
     csv_fd.close()
-    csv_id = open("sales_records_2.csv", 'w')
+    csv_id = open("sales_records.csv", 'w')
     keys = list(list_[0].keys())
     csv_writer = csv.DictWriter(csv_id, fieldnames=keys)
     csv_writer.writeheader()
@@ -47,7 +49,7 @@ def get_regions():
 
 # Function 4:
 def priority_by_region(region):
-    csv_fd = open("sales_records_2.csv", 'r')
+    csv_fd = open("sales_records.csv", 'r')
     csv_reader = csv.DictReader(csv_fd)
     priority_dict = {'L':0,'M':0,'H':0}
     for row in csv_reader:
@@ -58,7 +60,7 @@ def priority_by_region(region):
 
 #Function 5:
 def item_type_unit_sold():
-    csv_fd = open("sales_records_2.csv", 'r')
+    csv_fd = open("sales_records.csv", 'r')
     csv_reader = csv.DictReader(csv_fd)
     item_dict = {}
     x = get_item_types()
@@ -81,7 +83,7 @@ def get_item_types():
 
 # Function 6:
 def item_shipped_within(days):
-    csv_fd = open("sales_records_2.csv", 'r')
+    csv_fd = open("sales_records.csv", 'r')
     order_id_list = []
     dates = []
     csv_reader = csv.DictReader(csv_fd)
@@ -116,17 +118,37 @@ def country_revenue_item_type(country):
     for row in csv_reader:
         country_revenue[row['country']][row['item_type']]+=float(row['total_revenue'])
     
-    print(country_revenue)
+    return country_revenue
 
 # UTIL 7:
 def get_countries():
-    x = open("sales_records_2.csv", 'r')
+    x = open("sales_records.csv", 'r')
     a = []
     csv_r = csv.DictReader(x)
     for row in csv_r:
         a.append(row['country'])
     return list(set(a))
     
+# Function 8:
+def convert_date(date_):
+    new_date=arrow.get(date_,'M/D/YYYY')
+    return new_date
+
+def profit_between_days(day_1, day_2):
+    csv_fd=open('sales_records.csv','r')
+    csv_reader=csv.DictReader(csv_fd)
+    item_revenue_dict = {}
+    day1_ = convert_date(day_1)
+    day2_ = convert_date(day_2)
+    for row in csv_reader:
+        profit = row['total_profit']
+        item_type = row['item_type']
+        order_date = row['order_date']
+        order_date_ = convert_date(order_date) 
+        if order_date_ > day1_ and order_date_ < day2_:
+            item_revenue_dict[item_type]=profit
+    
+    return item_revenue_dict
 
 # Function 9:
 def count_unique_item_types():
@@ -144,90 +166,82 @@ def count_unique_item_types():
    
 
 def profit_by_country(country):
-    csv_fd = open("sales_records_2.csv", 'r')
+    csv_fd = open("sales_records.csv", 'r')
     csv_reader = csv.DictReader(csv_fd)
 
     profit_dict = {}
     for i in country:
         profit_dict.update({i:0})
-    
 
     for row in csv_reader:
         for i in country:
             if row["country"] == i:
                 profit_dict[i] += float(row["total_profit"])
 
-    print(profit_dict)
+    return profit_dict
  
-# Function 5:
-# def item_type_unit_sold():
-#     with open("sales_records.csv", 'r') as reader:
-#         csv_reader = csv.reader(reader)
-#         temp_dic = {}
-#         for row in csv_reader:
-#             temp_dic[row[2]] = int(row[7])
-#     reader.close()    
-#     return temp_dic
+
 def top_5_profitable_items():
-    #x = get_unique_order_ids()
-    y = csv.DictReader(open("sales_records_2.csv", 'r'))
+    y = csv.DictReader(open("sales_records.csv", 'r'))
     a = {}
     for row in y:
         a.update({row['order_id']:float(row['total_profit'])})
-    print(a)
-    print()
     b = list(a.values())
-    print(b)
-    print()
     b.sort()
     b.reverse()
-    print(b)
-    print()
     c = b[:5]
-    print(c)
-    print()
     order_id_list = []
-
     for i in a:
         for j in c:
             if a[i] == j:
                 order_id_list.append(i)
     return order_id_list
             
-            
-            
-        
-    
-    
+             
 
 def get_unique_order_ids():
-    x = open("sales_records_2.csv", 'r')
+    x = open("sales_records.csv", 'r')
     csv_r = csv.DictReader(x)
     y = []
     for i in csv_r:
         y.append(i['order_id'])
     return list(set(y))
-
-def profit_between_days(day_1,day_2):
     
-    
-    
-            
 
 if __name__ == "__main__":
-    #print(count_unique_item_types())
-    #print(item_type_unit_sold())
-    #print(get_unique_country_per_region(get_regions()))
-    #print(compute_profit())
-    #print(priority_by_region('Europe'))
-    #print(get_item_types())
-    #print(item_type_unit_sold())
-    #print(item_shipped_within(10))
-    #print(get_item_types())
-    #country_revenue_item_type(get_countries())
-    #print(get_countries())
-    #compute_profit()
-    #compute_profit()
-    #profit_by_country(get_countries())
+    # Function 1:
+    compute_profit()
+
+    #Function 2:
+    print(get_unique_country_per_region(get_regions()))
+
+    # Function 3:
+    print(profit_by_country(get_countries()))
+
+    #Function 4: 
+    print(priority_by_region('Europe'))
+
+    #Function 5:
+    print(item_type_unit_sold())
+
+    #Function 6:
+    print(item_shipped_within(10))
+
+    #Function 7:
+    print(country_revenue_item_type(get_countries()))
+
+    #Function 8:
+    maxInt = sys.maxsize
+    while True:
+        try:
+            csv.field_size_limit(maxInt)
+            break
+        except OverflowError:
+            maxInt = int(maxInt/10)
+    print(profit_between_days('5/13/2015', '5/15/2015'))
+
+    #Function 9: 
+    print(count_unique_item_types())
+
+    #Function 10:
     print(top_5_profitable_items())
-    
