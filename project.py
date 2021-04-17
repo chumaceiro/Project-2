@@ -131,21 +131,21 @@ def get_countries():
     
 # Function 8:
 def convert_date(date_):
-    new_date=arrow.get(date_,'M/D/YYYY')
-    return new_date
+    new_date_1=arrow.get(date_,'M/D/YYYY')
+    return new_date_1
 
 def profit_between_days(day_1, day_2):
     csv_fd=open('sales_records.csv','r')
     csv_reader=csv.DictReader(csv_fd)
     item_revenue_dict = {}
-    day1_ = convert_date(day_1)
-    day2_ = convert_date(day_2)
+    day_1_conv = convert_date(day_1)
+    day_2_conv = convert_date(day_2)
     for row in csv_reader:
         profit = row['total_profit']
         item_type = row['item_type']
         order_date = row['order_date']
-        order_date_ = convert_date(order_date) 
-        if order_date_ > day1_ and order_date_ < day2_:
+        order_date_conv = convert_date(order_date) 
+        if order_date_conv > day_1_conv and order_date_conv < day_2_conv:
             item_revenue_dict[item_type]=profit
     
     return item_revenue_dict
