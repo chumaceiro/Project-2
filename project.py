@@ -51,7 +51,7 @@ def get_regions():
 def priority_by_region(region):
     csv_fd = open("sales_records.csv", 'r')
     csv_reader = csv.DictReader(csv_fd)
-    priority_dict = {'L':0,'M':0,'H':0}
+    priority_dict = {'L':0,'M':0,'H':0, 'C': 0}
     for row in csv_reader:
         if row['region'] == region:
             priority_dict[row['order_priority']]+=1
